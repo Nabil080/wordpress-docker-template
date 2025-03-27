@@ -1,0 +1,18 @@
+services:
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+    image: mariadb
+    env_file: .env # non sensitive data
+    secrets:
+      - db_user_password
+      - db_root_password
+    environment:
+      DB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      DB_USER_PASSWORD_FILE: /run/secrets/db_user_password
+
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_user_password:
+    file: ../secrets/db_user_password.txt
