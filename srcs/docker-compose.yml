@@ -17,6 +17,26 @@ services:
       DB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       DB_USER_PASSWORD_FILE: /run/secrets/db_user_password
 
+  wordpress:
+    container_name: wordpress
+    image: wordpress
+    build:
+      context: ./requirements/wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - mariadb
+    networks:
+      - inception
+    # restart: always
+    env_file: .env
+    secrets:
+      - db_user_password
+      - db_root_password
+    environment:
+      DB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      DB_USER_PASSWORD_FILE: /run/secrets/db_user_password
+
 secrets:
   db_root_password:
     file: ../secrets/db_root_password.txt
@@ -30,6 +50,12 @@ volumes:
       type: none
       o: bind
       device: $HOME/data/mariadb
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $HOME/data/wordpress
 
 networks:
   inception:
