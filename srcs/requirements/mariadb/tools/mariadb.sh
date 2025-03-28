@@ -11,6 +11,7 @@ DB_USER_PWD=$(cat "$DB_USER_PASSWORD_FILE")
 echo "Name: ${DB_NAME}"
 echo "User: ${DB_USER}"
 echo "Pass: ${DB_USER_PWD}"
+echo "Root_Pass: ${DB_ROOT_PWD}"
 
 # Generate SQL script
 echo "CREATE DATABASE IF NOT EXISTS ${DB_NAME};" > db1.sql
@@ -23,3 +24,7 @@ echo "FLUSH PRIVILEGES;" >> db1.sql
 mysql < db1.sql
 
 rm db1.sql
+
+
+# Increment volume
+echo "+1" >> /var/lib/mysql/counter

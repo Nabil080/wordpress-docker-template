@@ -1,8 +1,14 @@
 services:
   mariadb:
+    container_name: mariadb
+    image: mariadb
     build:
       context: ./requirements/mariadb
-    image: mariadb
+    volumes: # we can store the files in the host machine instead of the container
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - inception
+    # restart: always
     env_file: .env # non sensitive data
     secrets:
       - db_user_password
@@ -16,3 +22,14 @@ secrets:
     file: ../secrets/db_root_password.txt
   db_user_password:
     file: ../secrets/db_user_password.txt
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $HOME/data/mariadb
+
+networks:
+  inception:
