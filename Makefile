@@ -1,16 +1,37 @@
-all:
-	docker compose -f ./srcs/docker-compose.yml up --build
+# Makefile
+NAME = inception
+DOCKER_COMPOSE = srcs/docker-compose.yml
+DATA_PATH = $(HOME)/data
+
+all: setup build up
+
+setup:
+	@mkdir -p $(DATA_PATH)/wordpress
+	@mkdir -p $(DATA_PATH)/mariadb
+	@if ! grep -q "127.0.0.1 $(USER).42.fr" /etc/hosts; then \
+		echo "127.0.0.1 $(USER).42.fr" | sudo tee -a /etc/hosts; \
+	fi
+
+build:
+	docker-compose -f $(DOCKER_COMPOSE) build
+
+up:
+	docker-compose -f $(DOCKER_COMPOSE) up
 
 down:
-	docker compose -f ./srcs/docker-compose.yml down -v
+	docker-compose -f $(DOCKER_COMPOSE) down
 
-clean:
-	docker stop $$(docker ps -qa)
-	docker rm $$(docker ps -qa)
-	docker rmi $$(docker images -qa)
-	docker volume rm $$(docker volume ls -q)
-	docker network rm network
+clean: down
+	docker system prune -a
 
-re: down all
+fclean: clean
+	sudo rm -rf $(DATA_PATH)
+	@if [ $$(docker volume ls -q | wc -l) -gt 0 ]; then \
+		docker volume rm -f $$(docker volume ls -q); \
+	else \
+		echo "No volumes to remove"; \
+	fi
 
-.PHONY: all down clean
+re: fclean all
+
+.PHONY: all setup build up down clean fclean re
