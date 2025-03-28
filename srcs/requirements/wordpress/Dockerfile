@@ -4,7 +4,7 @@ WORKDIR /app
 RUN apt-get update -y && apt-get upgrade -y
 
 # Install packages
-RUN apt-get install -y php7.4 php-fpm php-mysql mariadb-client curl
+RUN apt-get install -y php-fpm php-mysql mariadb-client curl
 
 # go to /var/www/html and empty it
 RUN mkdir -p /var/www/html && cd /var/www/html

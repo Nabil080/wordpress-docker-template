@@ -1,14 +1,13 @@
 services:
   mariadb:
     container_name: mariadb
-    image: mariadb
     build:
       context: ./requirements/mariadb
     volumes: # we can store the files in the host machine instead of the container
       - mariadb_data:/var/lib/mysql
     networks:
       - inception
-    # restart: always
+    restart: unless-stopped
     env_file: .env # non sensitive data
     secrets:
       - db_user_password
@@ -19,7 +18,6 @@ services:
 
   wordpress:
     container_name: wordpress
-    image: wordpress
     build:
       context: ./requirements/wordpress
     volumes:
@@ -28,7 +26,7 @@ services:
       - mariadb
     networks:
       - inception
-    # restart: always
+    restart: unless-stopped
     env_file: .env
     secrets:
       - db_user_password
@@ -40,6 +38,21 @@ services:
       DB_USER_PASSWORD_FILE: /run/secrets/db_user_password
       WP_ADMIN_CREDENTIALS_FILE: /run/secrets/wp_admin_credentials
       WP_USER_CREDENTIALS_FILE: /run/secrets/wp_user_credentials
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./requirements/nginx
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - wordpress
+    networks:
+      - inception
+    ports:
+      - "443:443"
+    restart: unless-stopped
+    env_file: .env
 
 secrets:
   db_root_password:
