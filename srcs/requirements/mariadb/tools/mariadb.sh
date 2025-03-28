@@ -1,11 +1,13 @@
 #!/bin/bash
 echo "Running mariadb.sh!"
+# Increment volume
+echo "+1" >> /var/lib/mysql/counter
 
 service mariadb start
 
 # Read secrets
-DB_ROOT_PWD=$(cat "$DB_ROOT_PASSWORD_FILE")
-DB_USER_PWD=$(cat "$DB_USER_PASSWORD_FILE")
+DB_ROOT_PWD=$(cat $DB_ROOT_PASSWORD_FILE)
+DB_USER_PWD=$(cat $DB_USER_PASSWORD_FILE)
 
 # Debug logs
 echo "Name: ${DB_NAME}"
@@ -26,5 +28,8 @@ echo "FLUSH PRIVILEGES;" >> db1.sql
 # Remove the script
 rm db1.sql
 
-# Increment volume
-echo "+1" >> /var/lib/mysql/counter
+# Now shutdown using the newly set root password
+mysqladmin -u root -p"${DB_ROOT_PWD}" shutdown
+
+# Restart MySQL in safe mode
+exec mysqld_safe

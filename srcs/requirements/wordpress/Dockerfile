@@ -4,7 +4,7 @@ WORKDIR /app
 RUN apt-get update -y && apt-get upgrade -y
 
 # Install packages
-RUN apt-get install -y php7.3 php-fpm php-mysql curl
+RUN apt-get install -y php7.4 php-fpm php-mysql mariadb-client curl
 
 # go to /var/www/html and empty it
 RUN mkdir -p /var/www/html && cd /var/www/html
@@ -18,8 +18,8 @@ RUN mv wp-cli.phar /usr/local/bin/wp
 RUN wp core download --allow-root --path=/var/www/html
 
 # Copy PHP configuration file
-RUN mkdir -p /etc/php/7.3/fpm/pool.d/
-COPY conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+RUN mkdir -p /etc/php/7.4/fpm/pool.d/
+COPY conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
 # Maybe expose a port
 
