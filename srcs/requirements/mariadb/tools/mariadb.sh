@@ -21,10 +21,10 @@ echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PWD}';" >> db1.sql
 echo "FLUSH PRIVILEGES;" >> db1.sql
 
 # Execute SQL script
-mysql < db1.sql
+< db1.sql mysql -uroot -p$(cat $DB_ROOT_PASSWORD_FILE)
 
+# Remove the script
 rm db1.sql
-
 
 # Increment volume
 echo "+1" >> /var/lib/mysql/counter
