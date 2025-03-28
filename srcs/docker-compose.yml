@@ -33,15 +33,23 @@ services:
     secrets:
       - db_user_password
       - db_root_password
+      - wp_admin_credentials
+      - wp_user_credentials
     environment:
       DB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       DB_USER_PASSWORD_FILE: /run/secrets/db_user_password
+      WP_ADMIN_CREDENTIALS_FILE: /run/secrets/wp_admin_credentials
+      WP_USER_CREDENTIALS_FILE: /run/secrets/wp_user_credentials
 
 secrets:
   db_root_password:
     file: ../secrets/db_root_password.txt
   db_user_password:
     file: ../secrets/db_user_password.txt
+  wp_admin_credentials:
+    file: ../secrets/wp_admin_credentials.txt
+  wp_user_credentials:
+    file: ../secrets/wp_user_credentials.txt
 
 volumes:
   mariadb_data:
