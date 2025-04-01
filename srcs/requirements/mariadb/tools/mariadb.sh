@@ -5,10 +5,6 @@ echo "+1" >> /var/lib/mysql/counter
 
 service mariadb start
 
-# Read secrets
-DB_ROOT_PWD=$(cat $DB_ROOT_PASSWORD_FILE)
-DB_USER_PWD=$(cat $DB_USER_PASSWORD_FILE)
-
 # Debug logs
 echo "Name: ${DB_NAME}"
 echo "User: ${DB_USER}"
@@ -23,7 +19,7 @@ echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PWD}';" >> db1.sql
 echo "FLUSH PRIVILEGES;" >> db1.sql
 
 # Execute SQL script
-< db1.sql mysql -uroot -p$(cat $DB_ROOT_PASSWORD_FILE)
+< db1.sql mysql -uroot -p"${DB_ROOT_PWD}"
 
 # Remove the script
 rm db1.sql

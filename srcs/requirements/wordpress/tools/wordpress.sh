@@ -1,15 +1,6 @@
 #!/bin/bash
 echo "=== Starting wordpress.sh ==="
 
-# Read secrets
-DB_USER_PASS=$(cat "$DB_USER_PASSWORD_FILE")
-WP_ADMIN_NAME=$(grep -oP 'name=\K.*' "$WP_ADMIN_CREDENTIALS_FILE")
-WP_ADMIN_PASS=$(grep -oP 'password=\K.*' "$WP_ADMIN_CREDENTIALS_FILE")
-WP_ADMIN_EMAIL=$(grep -oP 'email=\K.*' "$WP_ADMIN_CREDENTIALS_FILE")
-WP_USER_NAME=$(grep -oP 'name=\K.*' "$WP_USER_CREDENTIALS_FILE")
-WP_USER_EMAIL=$(grep -oP 'email=\K.*' "$WP_USER_CREDENTIALS_FILE")
-WP_USER_PASS=$(grep -oP 'password=\K.*' "$WP_USER_CREDENTIALS_FILE")
-
 # Debug
 echo "[DEBUG] Configuration:"
 echo "DB_HOSTNAME: $DB_HOSTNAME"
@@ -27,17 +18,17 @@ attempt=1
 
 echo "Waiting for MariaDB to become available (max ${MAX_ATTEMPTS} attempts)..."
 while [ $attempt -le $MAX_ATTEMPTS ]; do
-    if mysql -h"$DB_HOSTNAME" -u"$DB_USER" -p"$DB_USER_PASS" -e "SELECT 1;" >/dev/null 2>&1; then
-        echo "✅ MariaDB connection successful (attempt $attempt/$MAX_ATTEMPTS)"
+    if mysql -h"$DB_HOSTNAME" -u"$DB_USER" -p"$DB_USER_PWD" -e "SELECT 1;" >/dev/null 2>&1; then
+        echo "MariaDB connection successful (attempt $attempt/$MAX_ATTEMPTS)"
         break
     fi
     
-    echo "⏳ Attempt $attempt/$MAX_ATTEMPTS failed - retrying in ${SLEEP_INTERVAL}s..."
+    echo "Attempt $attempt/$MAX_ATTEMPTS failed - retrying in ${SLEEP_INTERVAL}s..."
     sleep $SLEEP_INTERVAL
     ((attempt++))
     
     if [ $attempt -gt $MAX_ATTEMPTS ]; then
-        echo "❌ ERROR: Failed to connect to MariaDB after $MAX_ATTEMPTS attempts"
+        echo "ERROR: Failed to connect to MariaDB after $MAX_ATTEMPTS attempts"
         exit 1
     fi
 done
@@ -48,10 +39,10 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     cd /var/www/html || exit 1
 
     wp core config \
-        --dbhost="$DB_HOSTNAME" \
+        --dbhost="$DB_HOSTNAME":3306 \
         --dbname="$DB_NAME" \
         --dbuser="$DB_USER" \
-        --dbpass="$DB_USER_PASS" \
+        --dbpass="$DB_USER_PWD" \
         --allow-root
     
     echo "Installing WordPress core"
@@ -59,7 +50,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --url="$DOMAIN_NAME" \
         --title="$WP_TITLE" \
         --admin_user="$WP_ADMIN_NAME" \
-        --admin_password="$WP_ADMIN_PASS" \
+        --admin_password="$WP_ADMIN_PWD" \
         --admin_email="$WP_ADMIN_EMAIL" \
         --allow-root
     
@@ -67,7 +58,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     wp user create \
         "$WP_USER_NAME" \
         "$WP_USER_EMAIL" \
-        --user_pass="$WP_USER_PASS" \
+        --user_pass="$WP_USER_PWD" \
         --role=author \
         --allow-root
     
