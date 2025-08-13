@@ -6,7 +6,7 @@ services:
     volumes: # we can store the files in the host machine instead of the container
       - mariadb_data:/var/lib/mysql
     networks:
-      - inception
+      - templatewordpress
     restart: unless-stopped
     env_file: .env # non sensitive data
 
@@ -19,7 +19,7 @@ services:
     depends_on:
       - mariadb
     networks:
-      - inception
+      - templatewordpress
     restart: unless-stopped
     env_file: .env
 
@@ -32,7 +32,7 @@ services:
     depends_on:
       - wordpress
     networks:
-      - inception
+      - templatewordpress
     ports:
       - "443:443"
     restart: unless-stopped
@@ -53,4 +53,4 @@ volumes:
       device: $HOME/data/wordpress
 
 networks:
-  inception:
+  templatewordpress:

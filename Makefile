@@ -1,15 +1,15 @@
 # Makefile
-NAME = inception
 DOCKER_COMPOSE = srcs/docker-compose.yml
 DATA_PATH = $(HOME)/data
+DOMAIN_NAME = nabil.fr
 
 all: setup build up
 
 setup:
 	mkdir -p $(DATA_PATH)/wordpress
 	mkdir -p $(DATA_PATH)/mariadb
-	@if ! grep -q "127.0.0.1 $(USER).42.fr" /etc/hosts; then \
-		echo "127.0.0.1 $(USER).42.fr" | sudo tee -a /etc/hosts; \
+	@if ! grep -q "127.0.0.1 $(DOMAIN_NAME)" /etc/hosts; then \
+		echo "127.0.0.1 $(DOMAIN_NAME)" | sudo tee -a /etc/hosts; \
 	fi
 
 build:

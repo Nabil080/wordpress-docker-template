@@ -1,1 +1,2 @@
-.env
+# Uncomment this to keep the env secret
+# .env

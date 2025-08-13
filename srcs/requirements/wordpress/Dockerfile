@@ -21,8 +21,6 @@ RUN wp core download --allow-root --path=/var/www/html
 RUN mkdir -p /etc/php/7.4/fpm/pool.d/
 COPY conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
-# Maybe expose a port
-
 # Copy and run script
 COPY ./tools/wordpress.sh /app
 RUN chmod +x ./wordpress.sh
